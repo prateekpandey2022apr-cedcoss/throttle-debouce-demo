@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="DemoCanvas1" width="2000" height="400"></canvas>
+    <hr>
+    <canvas id="DemoCanvas2" width="2000" height="400"></canvas>
+
+    <script>
+        const canvas1 = document.getElementById('DemoCanvas1');
+        const canvas2 = document.getElementById('DemoCanvas2');
+
+        let time1 = 10;
+        function draw1() {
+            if (canvas1.getContext) {
+                let context = canvas1.getContext("2d");
+                context.beginPath();
+                context.moveTo(100 + time1, 10 + 600);
+                context.lineTo(100 + time1, 200);
+                context.lineWidth = 2;
+                context.strokeStyle = '#808000';
+                context.stroke();
+            }
+        }
+
+        let time2 = 10;
+        function draw2() {
+            if (canvas2.getContext) {
+                let context = canvas2.getContext("2d");
+                context.beginPath();
+                context.moveTo(100 + time2, 10 + 600);
+                context.lineTo(100 + time2, 200);
+                context.lineWidth = 2;
+                context.strokeStyle = '#808000';
+                context.stroke();
+            }
+        }
+
+        function throttle(cb, delay) {
+            let shouldWait = false;
+
+            return (...args) => {
+                time1 += 1;
+                if (shouldWait) {
+                    return;
+                }
+                cb(...args);
+                shouldWait = true;
+                setTimeout(() => {
+                    shouldWait = false;
+                }, delay);
+            };
+        }
+
+        function debouce(cb, delay) {
+            let timerID;
+            return (...args) => {
+                time2 += 1;
+                clearTimeout(timerID);
+                timerID = setTimeout(() => {
+                    cb(...args);
+                }, delay);
+            };
+        }
+
+        const throttledDraw = throttle(draw1, 200);
+        const deboucedDraw = debouce(draw2, 200);
+
+        window.addEventListener('mousemove', function (e) {
+            throttledDraw();
+        });
+
+        window.addEventListener('mousemove', function (e) {
+            deboucedDraw();
+        });
+
+    </script>
+</body>
+
+</html>
